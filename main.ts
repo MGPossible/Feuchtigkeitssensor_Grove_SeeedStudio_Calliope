@@ -3,7 +3,7 @@
 /**
  * Grove Moisture Sensor Erweiterung
  */
-//% color=#3cba54 icon="\uf043" block="Feuchtigkeitssensor by MG"
+//% color=#8f3fd1 icon="\uf20e" block="Feuchtigkeitssensor by MG"
 //% groups=['Grundfunktionen', 'Erweiterungen']
 namespace feuchtigkeit {
 
