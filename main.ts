@@ -7,7 +7,24 @@
 //% groups=['Grundfunktionen', 'Erweiterungen']
 namespace feuchtigkeit {
 
-    let letzterWert = 0;
+    let sensorPin: AnalogPin = AnalogPin.C16
+    let letzterWert = 0
+
+    /**
+     * Initialisiert den Feuchtigkeitssensor.
+     */
+    //% group="Grundfunktionen"
+    //% block="Feuchtigkeitssensor initialisieren an Pin %pin"
+    //% block.tooltip="Legt fest an welchem Pin der Feuchtigkeitssensor angeschlossen ist."
+    //% pin.fieldEditor="gridpicker"
+    //% pin.fieldOptions.columns=3
+    //% pin.defl=AnalogPin.C16
+    export function initialisieren(pin: AnalogPin): void {
+
+        sensorPin = pin
+
+        basic.pause(100)
+    }
 
     /**
      * Liest den Rohwert des Feuchtigkeitssensors.
@@ -15,21 +32,19 @@ namespace feuchtigkeit {
      * Große Werte = trocken
      */
     //% group="Grundfunktionen"
-    //% block="Feuchtigkeitswert lesen an Pin %pin"
+    //% block="Feuchtigkeitswert lesen"
     //% block.tooltip="Liest den analogen Rohwert des Feuchtigkeitssensors."
-    //% pin.fieldEditor="gridpicker" pin.fieldOptions.columns=3
-    //% pin.defl=AnalogPin.C16
-    export function rohwert(pin: AnalogPin): number {
+    export function rohwert(): number {
 
-        let wert = pins.analogReadPin(pin);
+        let wert = pins.analogReadPin(sensorPin)
 
         if (wert > 0) {
-            letzterWert = wert;
+            letzterWert = wert
         }
 
-        basic.pause(20);
+        basic.pause(20)
 
-        return wert;
+        return wert
     }
 
     /**
@@ -38,50 +53,47 @@ namespace feuchtigkeit {
      * 100% = nass
      */
     //% group="Grundfunktionen"
-    //% block="Feuchtigkeit in [%] an Pin %pin"
+    //% block="Feuchtigkeit (%)"
     //% block.tooltip="Berechnet die Bodenfeuchtigkeit in Prozent."
-    //% pin.defl=AnalogPin.C16
-    export function prozent(pin: AnalogPin): number {
+    export function prozent(): number {
 
-        let wert = rohwert(pin);
+        let wert = rohwert()
 
-        // Werte ggf. anpassen
-        let trocken = 1023;
-        let nass = 300;
+        // Kalibrierwerte
+        let trocken = 1023
+        let nass = 300
 
-        let prozent = Math.map(wert, trocken, nass, 0, 100);
+        let feuchtigkeit = Math.map(wert, trocken, nass, 0, 100)
 
-        if (prozent < 0) prozent = 0;
-        if (prozent > 100) prozent = 100;
+        if (feuchtigkeit < 0) feuchtigkeit = 0
+        if (feuchtigkeit > 100) feuchtigkeit = 100
 
-        return Math.round(prozent);
+        return Math.round(feuchtigkeit)
     }
 
     /**
      * Prüft ob der Boden trocken ist.
      */
     //% group="Erweiterungen"
-    //% block="Boden trocken unter %grenzwert [%]"
+    //% block="Boden trocken unter %grenzwert (%)"
     //% block.tooltip="Gibt 'true/wahr' zurück wenn der Boden trockener als der Grenzwert ist."
     //% grenzwert.defl=30
-    //% pin.defl=AnalogPin.C16
-    export function istTrocken(grenzwert: number, pin: AnalogPin): boolean {
+    export function istTrocken(grenzwert: number): boolean {
 
-        return prozent(pin) < grenzwert;
+        return prozent() < grenzwert
     }
 
     /**
      * Wartet bis der Boden trocken wird.
      */
     //% group="Erweiterungen"
-    //% block="Warte bis Boden trocken unter %grenzwert %% an Pin %pin"
+    //% block="Warte bis Boden trocken unter %grenzwert (%)"
     //% block.tooltip="Hält das Programm an bis der Boden trockener als der Grenzwert ist."
     //% grenzwert.defl=30
-    //% pin.defl=AnalogPin.C16
-    export function warteBisTrocken(grenzwert: number, pin: AnalogPin): void {
+    export function warteBisTrocken(grenzwert: number): void {
 
-        while (prozent(pin) >= grenzwert) {
-            basic.pause(200);
+        while (prozent() >= grenzwert) {
+            basic.pause(200)
         }
     }
 
@@ -89,92 +101,88 @@ namespace feuchtigkeit {
      * Prüft ob sich die Feuchtigkeit geändert hat.
      */
     //% group="Erweiterungen"
-    //% block="Wenn Feuchtigkeit sich ändert mehr als %schwelle %% an Pin %pin"
+    //% block="Wenn Feuchtigkeit sich ändert mehr als %schwelle (%)"
     //% block.tooltip="Gibt 'true' zurück wenn sich die Feuchtigkeit deutlich geändert hat."
     //% schwelle.defl=10
-    //% pin.defl=AnalogPin.C16
-    export function wennFeuchtigkeitAendert(schwelle: number, pin: AnalogPin): boolean {
+    export function wennFeuchtigkeitAendert(schwelle: number): boolean {
 
-        let aktuell = prozent(pin);
+        let aktuell = prozent()
 
-        let delta = Math.abs(aktuell - letzterWert);
+        let delta = Math.abs(aktuell - letzterWert)
 
-        letzterWert = aktuell;
+        letzterWert = aktuell
 
-        return delta > schwelle;
+        return delta > schwelle
     }
 
     /**
      * Durchschnitt aus mehreren Messungen.
      */
     //% group="Grundfunktionen"
-    //% block="Durchschnitt von %anzahl Feuchtigkeitsmessungen an Pin %pin"
+    //% block="Durchschnitt von %anzahl Feuchtigkeitsmessungen"
     //% block.tooltip="Berechnet den Durchschnitt mehrerer Feuchtigkeitsmessungen."
     //% anzahl.defl=5
-    //% pin.defl=AnalogPin.C16
-    export function durchschnitt(anzahl: number, pin: AnalogPin): number {
+    export function durchschnitt(anzahl: number): number {
 
-        let summe = 0;
+        let summe = 0
 
         for (let i = 0; i < anzahl; i++) {
-            summe += prozent(pin);
-            basic.pause(50);
+            summe += prozent()
+            basic.pause(50)
         }
 
-        return Math.round(summe / anzahl);
+        return Math.round(summe / anzahl)
     }
 
     /**
      * Gibt die minimale Feuchtigkeit in einem Zeitraum zurück.
      */
     //% group="Erweiterungen"
-    //% block="Minimale Feuchtigkeit innerhalb von %dauer ms an Pin %pin"
+    //% block="Minimale Feuchtigkeit innerhalb von %dauer ms"
     //% block.tooltip="Gibt die kleinste gemessene Feuchtigkeit zurück."
     //% dauer.defl=5000
-    //% pin.defl=AnalogPin.C16
-    export function minimaleFeuchtigkeit(dauer: number, pin: AnalogPin): number {
+    export function minimaleFeuchtigkeit(dauer: number): number {
 
-        let min = 100;
-        let start = control.millis();
+        let min = 100
+        let start = control.millis()
 
         while (control.millis() - start < dauer) {
 
-            let wert = prozent(pin);
+            let wert = prozent()
 
             if (wert < min) {
-                min = wert;
+                min = wert
             }
 
-            basic.pause(100);
+            basic.pause(100)
         }
 
-        return min;
+        return min
     }
 
     /**
      * Gibt die maximale Feuchtigkeit in einem Zeitraum zurück.
      */
     //% group="Erweiterungen"
-    //% block="Maximale Feuchtigkeit innerhalb von %dauer ms an Pin %pin"
+    //% block="Maximale Feuchtigkeit innerhalb von %dauer ms"
     //% block.tooltip="Gibt die höchste gemessene Feuchtigkeit zurück."
     //% dauer.defl=5000
-    //% pin.defl=AnalogPin.C16
-    export function maximaleFeuchtigkeit(dauer: number, pin: AnalogPin): number {
+    export function maximaleFeuchtigkeit(dauer: number): number {
 
-        let max = 0;
-        let start = control.millis();
+        let max = 0
+        let start = control.millis()
 
         while (control.millis() - start < dauer) {
 
-            let wert = prozent(pin);
+            let wert = prozent()
 
             if (wert > max) {
-                max = wert;
+                max = wert
             }
 
-            basic.pause(100);
+            basic.pause(100)
         }
 
-        return max;
+        return max
     }
 }
