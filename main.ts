@@ -38,7 +38,7 @@ namespace feuchtigkeit {
      * 100% = nass
      */
     //% group="Grundfunktionen"
-    //% block="Feuchtigkeit in % an Pin %pin"
+    //% block="Feuchtigkeit in [%] an Pin %pin"
     //% block.tooltip="Berechnet die Bodenfeuchtigkeit in Prozent."
     //% pin.defl=AnalogPin.C16
     export function prozent(pin: AnalogPin): number {
@@ -61,7 +61,7 @@ namespace feuchtigkeit {
      * Prüft ob der Boden trocken ist.
      */
     //% group="Erweiterungen"
-    //% block="Boden trocken unter %grenzwert %% an Pin %pin"
+    //% block="Boden trocken unter %grenzwert [%]"
     //% block.tooltip="Gibt 'true/wahr' zurück wenn der Boden trockener als der Grenzwert ist."
     //% grenzwert.defl=30
     //% pin.defl=AnalogPin.C16
