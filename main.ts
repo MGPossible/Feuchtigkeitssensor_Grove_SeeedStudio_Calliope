@@ -88,7 +88,7 @@ namespace feuchtigkeit {
     }
 
     //% group="Erweiterungen"
-    //% block="Wenn Feuchtigkeit sich um mehr als %schwelle ändert"
+    //% block="Wenn Feuchtigkeit sich um mehr als %schwelle (Prozent) ändert"
     //% schwelle.defl=10
     export function wennFeuchtigkeitAendert(
         schwelle: number
