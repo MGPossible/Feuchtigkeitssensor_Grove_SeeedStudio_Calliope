@@ -1,288 +1,152 @@
-# Grove Feuchtigkeitssensor Erweiterung für den Calliope mini
+# 🌱 Feuchtigkeitssensor MG – MakeCode Erweiterung
 
-## Übersicht
-
-Diese Erweiterung ermöglicht die einfache Verwendung eines Grove Bodenfeuchtigkeitssensors am Calliope mini innerhalb des MakeCode-Editors.
-
-Die Erweiterung wurde für den Unterricht, Maker-Projekte, Pflanzenüberwachung und Smart-Garden-Projekte entwickelt.
-
-Typische Einsatzbereiche:
-
-- Pflanzenbewässerung
-- Smart Gardening
-- Umweltmessungen
-- MINT-Unterricht
-- Automatische Warnsysteme
-- Datenlogging
+Diese Erweiterung hilft dir dabei, mit einem **Bodenfeuchtigkeitssensor** die Feuchtigkeit von Erde zu messen.
+Damit kannst du erkennen, ob Pflanzen Wasser brauchen oder ob die Erde noch feucht genug ist 🌿💧
 
 ---
 
-# Messprinzip
+## 🔌 So funktioniert der Sensor
 
-Der Grove Feuchtigkeitssensor misst den elektrischen Widerstand zwischen zwei Leitflächen.
+Der Feuchtigkeitssensor misst den elektrischen Widerstand im Boden.
 
-Grundprinzip:
+* **Trockene Erde → hoher Messwert**
+* **Feuchte Erde → niedriger Messwert**
 
-- Feuchte Erde → niedriger Widerstand
-- Trockene Erde → höherer Widerstand
-
-Daraus entstehen Rohwerte zwischen ungefähr:
-
-```text
-0 bis 1023
-```
-
-Interpretation:
-
-| Zustand | Rohwert |
-|---|---:|
-| Sehr nass | klein |
-| Feucht | mittel |
-| Trocken | groß |
+👉 Die Erweiterung wandelt diese Werte in verständliche Prozentwerte um.
 
 ---
 
-# Kalibrierung
+## 🚀 Grundfunktionen
 
-Da unterschiedliche Sensoren verschiedene Messbereiche besitzen, sollten die Kalibrierwerte angepasst werden.
+### 🔧 Sensor starten
 
-## Trockenen Wert bestimmen
+Feuchtigkeitssensor initialisieren an Pin C16
 
-Sensor vollständig trocken messen:
-
-```typescript
-serial.writeNumber(feuchtigkeit.rohwert())
-```
-
-Wert notieren.
-
-## Nassen Wert bestimmen
-
-Sensor in feuchte Erde stecken.
-
-Wert notieren.
-
-Danach:
-
-```typescript
-feuchtigkeit.kalibrieren(
-    trockenerWert,
-    nasserWert
-)
-```
-
-Standard:
-
-```text
-trocken = 1023
-nass = 300
-```
+➡️ Damit sagst du dem Programm, an welchem Pin der Sensor angeschlossen ist.
 
 ---
 
-# Funktionen
+### ⚙️ Sensor kalibrieren
 
-## Initialisieren
+Kalibrierung trocken 1023 nass 300
 
-Konfiguriert den verwendeten Analog-Pin.
+➡️ Speichert eigene Messwerte für trockene und nasse Erde.
 
-```typescript
-feuchtigkeit.initialisieren(
-    AnalogPin.C16
-)
-```
+**Tipp:**
 
----
-
-## Rohwert lesen
-
-Liest direkt den analogen Sensorwert.
-
-```typescript
-let wert =
-    feuchtigkeit.rohwert()
-```
+* Trockenwert messen → Sensor in trockene Luft halten
+* Nasswert messen → Sensor in sehr feuchte Erde stecken
 
 ---
 
-## Prozentwert lesen
+### 📊 Feuchtigkeit messen (Prozent)
 
-Berechnet einen Prozentwert.
+Feuchtigkeit (in Prozent)
 
-Definition:
+➡️ Gibt die aktuelle Bodenfeuchtigkeit als Prozentwert zurück.
 
-- 0 % = trocken
-- 100 % = nass
-
-```typescript
-let p =
-    feuchtigkeit.prozent()
-```
+**0 % = sehr trocken**
+**100 % = sehr nass**
 
 ---
 
-## Trockenheit prüfen
+### 🔢 Rohwert lesen
 
-```typescript
-if (
-    feuchtigkeit.istTrocken(30)
-) {
+Feuchtigkeitswert lesen (Rohwert)
 
-}
-```
-
-Bedeutung:
-
-Unter 30 % → trocken
+➡️ Gibt den unverarbeiteten Sensorwert zwischen **0 und 1023** zurück.
 
 ---
 
-## Nässe prüfen
+### 📈 Durchschnitt berechnen
 
-```typescript
-if (
-    feuchtigkeit.istNass(70)
-) {
+Durchschnitt von 5 Messungen
 
-}
-```
+➡️ Mehrere Messungen werden gemittelt, damit das Ergebnis stabiler wird.
 
 ---
 
-## Änderung erkennen
+## 🧠 Erweiterungen (Extra-Funktionen)
 
-Erkennt größere Änderungen.
+### 🌵 Boden trocken?
 
-```typescript
-if (
-    feuchtigkeit.wennFeuchtigkeitAendert(10)
-) {
+Boden trocken unter 30
 
-}
-```
+➡️ Gibt **WAHR** zurück, wenn die Erde trockener als der Grenzwert ist.
 
 ---
 
-## Durchschnitt bilden
+### 💧 Boden nass?
 
-Mehrere Messungen mitteln.
+Boden nass über 70
 
-```typescript
-let avg =
-    feuchtigkeit.durchschnitt(5)
-```
+➡️ Gibt **WAHR** zurück, wenn die Erde feuchter als der Grenzwert ist.
 
 ---
 
-## Minimale Feuchtigkeit
+### 🔄 Feuchtigkeit hat sich verändert
 
-```typescript
-let min =
-feuchtigkeit.minimaleFeuchtigkeit(
-    5000
-)
-```
+Wenn Feuchtigkeit sich um mehr als 10 Prozent ändert
 
-Misst über 5 Sekunden.
+➡️ Erkennt größere Änderungen der Bodenfeuchtigkeit.
 
 ---
 
-## Maximale Feuchtigkeit
+### 📉 Kleinste Feuchtigkeit messen
 
-```typescript
-let max =
-feuchtigkeit.maximaleFeuchtigkeit(
-    5000
-)
-```
+Minimale Feuchtigkeit innerhalb 5000 ms
+
+➡️ Sucht den kleinsten gemessenen Wert innerhalb der angegebenen Zeit.
 
 ---
 
-## Warten bis Boden trocken
+### 📈 Größte Feuchtigkeit messen
 
-```typescript
-feuchtigkeit.warteBisTrocken(
-    30,
-    60000
-)
-```
+Maximale Feuchtigkeit innerhalb 5000 ms
 
-Parameter:
-
-- 30 = Schwellwert
-- 60000 = Timeout
+➡️ Sucht den größten gemessenen Wert innerhalb der angegebenen Zeit.
 
 ---
 
-# Beispielprojekt: Pflanzenüberwachung
+### ⏳ Warten bis Boden trocken ist
 
-```typescript
-feuchtigkeit.initialisieren(
-    AnalogPin.C16
-)
+Warte bis Boden trocken unter 30 oder 10000 ms
 
-basic.forever(function () {
+➡️ Wartet, bis der Boden trocken genug ist oder das Zeitlimit erreicht wurde.
 
-    let wert =
-    feuchtigkeit.prozent()
+Rückgabe:
 
-    basic.showNumber(wert)
-
-    if (
-        feuchtigkeit.istTrocken(30)
-    ) {
-
-        basic.showIcon(
-            IconNames.Sad
-        )
-
-    } else {
-
-        basic.showIcon(
-            IconNames.Happy
-        )
-    }
-
-    basic.pause(1000)
-})
-```
+* **WAHR** → Boden wurde trocken
+* **FALSCH** → Zeit abgelaufen
 
 ---
 
-# Hinweise zur Lebensdauer
+## 🌿 Typische Werte
 
-Viele günstige Feuchtigkeitssensoren korrodieren bei Dauerbetrieb.
-
-Empfehlungen:
-
-- Nur kurz messen
-- Sensor nach Messung abschalten
-- Nicht dauerhaft unter Spannung lassen
-- Edelstahl-Sensoren bevorzugen
+| Bodenzustand | Feuchtigkeit |
+| ------------ | ------------ |
+| Sehr trocken | 0–20 %       |
+| Trocken      | 20–40 %      |
+| Normal       | 40–60 %      |
+| Feucht       | 60–80 %      |
+| Sehr nass    | 80–100 %     |
 
 ---
 
-# Fehlerbehebung
+## ⚠️ Hinweise
 
-## Immer 0 %
+* Sensor vor der ersten Nutzung kalibrieren
+* Metallspitzen nicht dauerhaft im Wasser lassen
+* Messwerte können je nach Erde unterschiedlich sein
+* Durchschnittswerte liefern oft stabilere Ergebnisse
 
-Mögliche Ursachen:
+---
 
-- falscher Pin
-- Sensor defekt
-- Kurzschluss
+## 🎮 Ideen
 
-## Immer 100 %
-
-Mögliche Ursachen:
-
-- Kalibrierung falsch
-- Sensor dauerhaft nass
-
-## Stark schwankende Werte
-
-Lösungen:
-
-- Durchschnitt verwenden
-- Mehrfach messen
-- Kabel prüfen
+* Automatische Pflanzenbewässerung
+* Zimmerpflanzen überwachen
+* Smart Garden bauen
+* Warnung bei trockenem Boden
+* LED-Anzeige für Pflanzenzustand
+* Datenlogger für Bodenfeuchtigkeit 🌱📊
