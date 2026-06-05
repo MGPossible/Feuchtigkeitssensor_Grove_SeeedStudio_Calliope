@@ -1,8 +1,10 @@
-# 🌱 Feuchtigkeitssensor MG – MakeCode Erweiterung
+# 🌱 Feuchtigkeitssensor von SeeedStudio (Grove) – MakeCode Erweiterung
 
 Diese Erweiterung hilft dir dabei, mit einem **Bodenfeuchtigkeitssensor** die Feuchtigkeit von Erde zu messen.
 Damit kannst du erkennen, ob Pflanzen Wasser brauchen oder ob die Erde noch feucht genug ist 🌿💧
 
+Diese Erweiterung funktioniert nur mit diesem Sensor:
+[Grove - Moisture Sensor V1.4](https://wiki.seeedstudio.com/Grove-Moisture_Sensor/)
 ---
 
 ## 🔌 So funktioniert der Sensor
